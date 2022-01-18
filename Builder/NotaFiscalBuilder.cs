@@ -15,6 +15,8 @@ namespace Builder
 
         public string Observacoes { get; set; }
 
+        private IList<AcaoAposGerarNota> acoes = new List<AcaoAposGerarNota>();
+
         public void ParaEmpresa(string nome)
         {
             this.RazaoSocial = nome;
@@ -42,9 +44,24 @@ namespace Builder
             this.Impostos += item.Valor * 0.05;
         }
 
+        public void AdicionaAcao(AcaoAposGerarNota acao)
+        {
+            //Observer - Adiciona as ações necessárias na lista para serem executadas depois
+            this.acoes.Add(acao);
+        }
+
         public NotaFiscal CriarNota()
         {
-            return new NotaFiscal(RazaoSocial, Cnpj, DataEmissao, ValorBruto, Impostos, Itens, Observacoes);
+            var nf = new NotaFiscal(RazaoSocial, Cnpj, DataEmissao, ValorBruto, Impostos, Itens, Observacoes);
+
+            //Observer - Cria uma lista de ações a serem executadas e executa tudo de uma vez
+            //Sem se preocupar com o que precisa fazer ou com o que tem lá:
+            foreach(AcaoAposGerarNota acao in acoes)
+            {
+                acao.Executa(nf);
+            }
+
+            return nf;
         }
     }
 }

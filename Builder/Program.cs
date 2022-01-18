@@ -19,6 +19,10 @@ namespace Builder
             criadorNF.NaDataAtual();
             criadorNF.ComObservacoes("minhas observações");
 
+            //Insere as ações para serem executadas após a criação, e o criador executará todas:
+            criadorNF.AdicionaAcao(new EnviadorDeEmail());
+            criadorNF.AdicionaAcao(new NotaFiscalDAO());
+
             NotaFiscal nf = criadorNF.CriarNota();
 
             Console.WriteLine(nf.RazaoSocial);
